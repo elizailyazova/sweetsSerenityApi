@@ -32,14 +32,23 @@ class DessertDetailAPIView(generics.RetrieveAPIView):
 
 
 def search_desserts(request):
-    if request.method == 'GET':
-        query = request.GET.get('dessertName', '')
-        if query:
-            desserts = Dessert.objects.filter(name__icontains=query)
-        else:
-            desserts = Dessert.objects.all()
+    query = request.GET.get('query', '')
+    desserts = Dessert.objects.filter(name__icontains=query)
 
-        desserts_json = serializers.serialize('json', desserts)
-        return JsonResponse(desserts_json, safe=False)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    data = []
+    for dessert in desserts:
+        dessert_data = {
+            "id": dessert.id,
+            "name": dessert.name,
+            "category": dessert.category_id,
+            "price": str(dessert.price),
+            "image": request.build_absolute_uri(dessert.image.url),
+            "description": dessert.description,
+            "formula": dessert.formula,
+            "nutrition": dessert.nutrition,
+            "calories": dessert.calories,
+            "freshness_date": dessert.freshness_date
+        }
+        data.append(dessert_data)
+
+    return JsonResponse(data, safe=False)
