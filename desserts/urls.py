@@ -11,4 +11,5 @@ urlpatterns = [
     path('create/', v.DessertCreateAPIView.as_view()),
     path('all', v.DessertListAPIView.as_view()),
     path('<int:pk>/', v.DessertDetailAPIView.as_view()),
+    path('search/', v.search_desserts, name='search_desserts'),
 ]
